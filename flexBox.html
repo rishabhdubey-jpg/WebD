@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #parent{
+        border: 2px solid black;
+        height: 400px;
+        width: 100vw;
+
+        /* flexBox properties */
+        display: flex;
+        /* justify-content: is used to align items along the main axis */
+        /* justify-content: ; works along x axis */
+
+        justify-content: center;
+        /* justify-content: baseline; */
+        /* justify-content: end; */
+
+        /* space btw the items */
+        /* justify-content: space-around;  */
+        /* justify-content: space-between; */
+        /* justify-content: space-evenly; */
+
+        /* align items along the cross axis (y axis) */
+        /* align-items: baseline; */
+        /* align-items: center; */
+        /* align-items: end; */
+        }
+
+    #parent div{
+        height: 100px;
+        width: 100px;
+    }
+    #parent div:nth-child(1){
+        background-color: red;
+    }
+    #parent div:nth-child(2){
+        background-color: royalblue;
+    }
+    #parent div:nth-child(3){
+        background-color: aquamarine;
+    }
+    #parent div:nth-child(4){
+        background-color: rosybrown;
+    }
+</style>
+<body>
+    <!-- <h2>flexBox</h2> -->
+
+    <div id="parent">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</body>
+</html>
