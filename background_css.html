@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    /* The background for any particular size */
+    /* div {
+        background-color: rgb(20, 16, 239);
+        height: 200px;
+        width: 200px;
+    } */
+
+    /* To capture full viewport height and width:     */
+    /* #parent {
+        height: 100vh;
+        width: 100vw;
+        background-color: cornflowerblue;
+    } */
+    /* 100vh : hight se 100% of viewport height
+       100vw: width se 100% of viewport width */
+
+    #parent {
+        height: 200px;
+        width: 200px;
+        background-color: black;
+    }
+
+    /* % (percentage) is relative to the parent element */
+    #child {
+        height: 50%;
+        width: 50%;
+        background-color: olive;
+    }
+</style>
+
+<body>
+    <div>
+        <div id="parent">
+            <div id="child"></div>
+        </div>
+    </div>
+</body>
+
+</html>
