@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- 3rd option: external css file linked to html file -->
+    <!-- href attribute specifies the path to the css file -->
+    <link rel="stylesheet" href="">
+
+    <!-- 2nd option: -->
+    <style>
+        h1 {
+            color: green;
+        }
+    </style>
+
+    <!-- id used in style and for class we use . (dot) before the class name -->
+    <!-- id is unique and class can be used multiple times in a page -->
+    <style>
+        #one {
+            color: blue;
+        }
+
+        .two {
+            color: aqua;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 1st option: -->
+    <!-- inline css, puts the css properties in an particular element. -->
+    <h1 style="color: red;">Hello</h1>
+
+    <h1 id="one">Hey</h1>
+    <h1 class="two">Hiii</h1>
+    <h1 id="one" class="two">Rdx</h1>
+
+</body>
+
+</html>
