@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Query Demo</title>
+
+    <style>
+
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            padding: 40px;
+            text-align: center;
+            background-color: lightblue;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        p {
+            font-size: 20px;
+        }
+
+        /* 📱 Mobile view */
+        @media (max-width: 600px) {
+            .container {
+                background-color: lightcoral;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        /* 📱 Tablet view */
+        @media (min-width: 601px) and (max-width: 1024px) {
+            .container {
+                background-color: lightgreen;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+        }
+
+        /* 💻 Desktop view */
+        @media (min-width: 1025px) {
+            .container {
+                background-color: lightblue;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Media Query Demo</h1>
+
+        <p>Screen size ke hisaab se design change hota hai</p>
+    </div>
+
+</body>
+</html>
