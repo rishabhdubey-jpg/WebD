@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flip Card</title>
+    <style>
+        body{
+            perspective: 900px;
+        }
+        #main{
+            height: 500px;
+            position: relative;
+            width: 300px;
+            margin: 40px auto;
+         
+            transform-style: preserve-3d;
+            transition: 3s;
+            /* box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px; */
+        }
+        #main:hover{
+            transform: rotateY(180deg);
+
+        }
+        #card_a{
+            height: 50%;
+            position: absolute;
+            width: 100%;
+            z-index: 7;
+            backface-visibility: hidden;
+        
+        }
+        img{
+            height: 100%;
+            width: 100%;
+           
+
+        }
+        #card_b{
+            height: 50%;
+            width: 100%;
+            z-index: 3;
+            transform: rotateY(180deg);
+            position: absolute;
+            background-color: rebeccapurple;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="card_a">
+            <img  src="https://images.unsplash.com/photo-1768511731493-d3c2aa483bb5?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"/>
+        </div>
+        <div id="card_b">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem, blanditiis.</div>
+
+    </div>
+</body>
+</html>
