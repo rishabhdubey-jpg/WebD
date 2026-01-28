@@ -1,46 +1,48 @@
 /*************************************************
- SNAKE GAME – HUMAN READABLE VERSION
+ * SNAKE GAME – FINAL VERSION
  * Features:
- * - Theme switcher (Press T)
- * - Speed increases as score grows
- * - Smooth animations & glow effects
+ * - Self collision
+ * - Fullscreen mode (F)
+ * - Theme switcher (T)
+ * - Speed increases per score
+ * - Background grid
  *************************************************/
-
-/* CANVAS SETUP  */
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 700;
-canvas.height = 400;
-
-/*  GAME CONSTANTS  */
-
+const DEFAULT_WIDTH = 700;
+const DEFAULT_HEIGHT = 400;
 const CELL_SIZE = 50;
+
+canvas.width = DEFAULT_WIDTH;
+canvas.height = DEFAULT_HEIGHT;
 
 /*  GAME STATE  */
 
-let snake = [[0, 0]];          // Snake body (each cell is [x, y])
-let direction = "right";       // Current movement direction
-let score = 0;                // Player score
-let gameOver = false;          // Game state flag
-let food = generateFood();     // Food position
-let foodPulse = 0;             // For food animation
+let snake = [[0, 0]];
+let direction = "right";
+let score = 0;
+let gameOver = false;
+let food = generateFood();
+let pulse = 0;
 
 /*  THEMES  */
 
 const themes = {
   dark: {
-    background: "#0f172a",
-    snakeBody: "#22c55e",
-    snakeHead: "#4ade80",
+    bg: "#0f172a",
+    grid: "#1e293b",
+    snake: "#22c55e",
+    head: "#4ade80",
     food: "#ef4444",
     text: "#e5e7eb"
   },
   light: {
-    background: "#ecfeff",
-    snakeBody: "#0f766e",
-    snakeHead: "#14b8a6",
+    bg: "#ecfeff",
+    grid: "#cbd5e1",
+    snake: "#0f766e",
+    head: "#14b8a6",
     food: "#dc2626",
     text: "#0f172a"
   }
@@ -48,61 +50,52 @@ const themes = {
 
 let currentTheme = "dark";
 
-/*  SPEED CONTROL  */
+/*  SPEED  */
 
-let speed = 220; // milliseconds
+let speed = 220;
 let gameInterval = setInterval(gameLoop, speed);
 
-/*  INPUT HANDLING  */
+/*  INPUT  */
 
 document.addEventListener("keydown", (e) => {
-
-  // Prevent instant reverse direction
   if (e.key === "ArrowUp" && direction !== "down") direction = "up";
   if (e.key === "ArrowDown" && direction !== "up") direction = "down";
   if (e.key === "ArrowLeft" && direction !== "right") direction = "left";
   if (e.key === "ArrowRight" && direction !== "left") direction = "right";
 
-  // Theme toggle
-  if (e.key === "t" || e.key === "T") {
-    currentTheme = currentTheme === "dark" ? "light" : "dark";
-  }
+  if (e.key === "T" || e.key === "t") toggleTheme();
+  if (e.key === "F" || e.key === "f") toggleFullscreen();
 });
 
-/*  MAIN GAME LOOP  */
+/*  GAME LOOP  */
 
 function gameLoop() {
-  drawGame();
-  updateGame();
+  draw();
+  update();
 }
 
-/*  DRAWING  */
+/*  DRAW  */
 
-function drawGame() {
+function draw() {
   const theme = themes[currentTheme];
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  ctx.fillStyle = theme.background;
+
+  ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  snake.forEach((segment, index) => {
+  drawGrid(theme.grid);
+
+  snake.forEach((part, index) => {
     ctx.shadowBlur = 15;
-    ctx.shadowColor = theme.snakeBody;
-
-    ctx.fillStyle =
-      index === snake.length - 1
-        ? theme.snakeHead
-        : theme.snakeBody;
-
-    drawRoundedCell(segment[0], segment[1]);
+    ctx.shadowColor = theme.snake;
+    ctx.fillStyle = index === snake.length - 1 ? theme.head : theme.snake;
+    drawRoundedCell(part[0], part[1]);
   });
 
   ctx.shadowBlur = 0;
 
-  // Draw food with pulse animation
-  foodPulse += 0.1;
-  const scale = 1 + Math.sin(foodPulse) * 0.12;
+  pulse += 0.1;
+  const scale = 1 + Math.sin(pulse) * 0.12;
 
   ctx.save();
   ctx.translate(food[0] + 25, food[1] + 25);
@@ -114,35 +107,30 @@ function drawGame() {
   ctx.restore();
 
   ctx.fillStyle = theme.text;
-  ctx.font = "20px Poppins, sans-serif";
+  ctx.font = "18px Poppins";
   ctx.fillText(`Score: ${score}`, 20, 30);
   ctx.font = "14px Poppins";
-  ctx.fillText(`Theme: ${currentTheme.toUpperCase()} (Press T)`, 20, 50);
+  ctx.fillText("T: Theme | F: Fullscreen", 20, 50);
 
   if (gameOver) {
     ctx.fillStyle = "rgba(0,0,0,0.7)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "38px Poppins";
-    ctx.fillText("GAME OVER", 230, 190);
-    ctx.font = "18px Poppins";
-    ctx.fillText("Refresh to Restart", 260, 225);
-
+    ctx.fillStyle = "#fff";
+    ctx.font = "36px Poppins";
+    ctx.fillText("GAME OVER", canvas.width / 2 - 110, canvas.height / 2);
     clearInterval(gameInterval);
   }
 }
 
-/*  GAME LOGIC  */
+/*  UPDATE  */
 
-function updateGame() {
+function update() {
   if (gameOver) return;
 
-  const [headX, headY] = snake[snake.length - 1];
-  let newX = headX;
-  let newY = headY;
+  const [x, y] = snake[snake.length - 1];
+  let newX = x;
+  let newY = y;
 
-  // Move snake
   if (direction === "right") newX += CELL_SIZE;
   if (direction === "left") newX -= CELL_SIZE;
   if (direction === "down") newY += CELL_SIZE;
@@ -159,7 +147,12 @@ function updateGame() {
     return;
   }
 
-  // Food eaten
+  // Self collision
+  if (hasHitSelf(newX, newY)) {
+    gameOver = true;
+    return;
+  }
+
   if (newX === food[0] && newY === food[1]) {
     score++;
     food = generateFood();
@@ -168,21 +161,14 @@ function updateGame() {
     snake.shift();
   }
 
-  // Add new head
   snake.push([newX, newY]);
 }
 
-/* SPEED LOGIC */
-function increaseSpeed() {
-  // Every 3 points, speed up (with a safe limit)
-  if (score % 3 === 0 && speed > 80) {
-    speed -= 15;
-    clearInterval(gameInterval);
-    gameInterval = setInterval(gameLoop, speed);
-  }
-}
+/*  HELPERS  */
 
-/* HELPERS */
+function hasHitSelf(x, y) {
+  return snake.some(segment => segment[0] === x && segment[1] === y);
+}
 
 function generateFood() {
   return [
@@ -191,19 +177,63 @@ function generateFood() {
   ];
 }
 
+function increaseSpeed() {
+  if (score % 3 === 0 && speed > 80) {
+    speed -= 15;
+    clearInterval(gameInterval);
+    gameInterval = setInterval(gameLoop, speed);
+  }
+}
+
+function drawGrid(color) {
+  ctx.strokeStyle = color;
+  for (let x = 0; x <= canvas.width; x += CELL_SIZE) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+  for (let y = 0; y <= canvas.height; y += CELL_SIZE) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+}
+
 function drawRoundedCell(x, y) {
   const size = 46;
-  const radius = 10;
-
+  const r = 10;
   ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + size - radius, y);
-  ctx.quadraticCurveTo(x + size, y, x + size, y + radius);
-  ctx.lineTo(x + size, y + size - radius);
-  ctx.quadraticCurveTo(x + size, y + size, x + size - radius, y + size);
-  ctx.lineTo(x + radius, y + size);
-  ctx.quadraticCurveTo(x, y + size, x, y + size - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + size - r, y);
+  ctx.quadraticCurveTo(x + size, y, x + size, y + r);
+  ctx.lineTo(x + size, y + size - r);
+  ctx.quadraticCurveTo(x + size, y + size, x + size - r, y + size);
+  ctx.lineTo(x + r, y + size);
+  ctx.quadraticCurveTo(x, y + size, x, y + size - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
   ctx.fill();
+}
+
+/*  UI HELPERS */
+
+function toggleTheme() {
+  currentTheme = currentTheme === "dark" ? "light" : "dark";
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    canvas.requestFullscreen();
+    resizeCanvas(window.innerWidth, window.innerHeight);
+  } else {
+    document.exitFullscreen();
+    resizeCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+  }
+}
+
+function resizeCanvas(w, h) {
+  canvas.width = Math.floor(w / CELL_SIZE) * CELL_SIZE;
+  canvas.height = Math.floor(h / CELL_SIZE) * CELL_SIZE;
 }
